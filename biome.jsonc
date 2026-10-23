@@ -1,0 +1,199 @@
+{
+  "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
+  "files": {
+    "ignoreUnknown": false,
+    "includes": [
+      "**",
+      "!**/pnpm-lock.yaml",
+      "!**/migrations",
+      "!**/node_modules",
+      "!**/.next",
+      "!**/public",
+      "!**/.vercel",
+      "!**/db-scripts",
+      "!**/docs",
+      "!**/src/components/ui",
+      "!**/src/3rd-party",
+      "!**/*.css",
+      "!**/email-templates"
+    ]
+  },
+  "vcs": {
+    "enabled": true,
+    "clientKind": "git",
+    "defaultBranch": "main",
+    "useIgnoreFile": true
+  },
+  "formatter": {
+    "enabled": true,
+    "formatWithErrors": false,
+    "indentStyle": "space",
+    "indentWidth": 2,
+    "lineEnding": "lf",
+    "lineWidth": 120,
+    "attributePosition": "auto"
+  },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "recommended": true,
+      "a11y": {
+        "useHtmlLang": "warn", // Not in recommended ruleset, turning on manually
+        "noHeaderScope": "warn", // Not in recommended ruleset, turning on manually
+        "useValidAriaRole": {
+          "level": "warn",
+          "options": {
+            "ignoreNonDom": false,
+            "allowInvalidRoles": ["none", "text"]
+          }
+        },
+        "useSemanticElements": "off", // Rule is buggy, revisit later
+        "noSvgWithoutTitle": "off", // We do not intend to adhere to this rule
+        "useMediaCaption": "off", // We would need a cultural change to turn this on
+        "noAutofocus": "off", // We're highly intentional about when we use autofocus
+        "useFocusableInteractive": "off", // Disable focusable interactive element requirement
+        "useAriaPropsForRole": "off", // Disable required ARIA attributes check
+        "useKeyWithClickEvents": "off", // Disable keyboard event requirement with click events,
+        "noStaticElementInteractions": "warn",
+        "useValidAutocomplete": "warn"
+      },
+      "complexity": {
+        "noUselessStringConcat": "warn", // Not in recommended ruleset, turning on manually
+        "noForEach": "off", // forEach is too familiar to ban
+        "noUselessSwitchCase": "off", // Turned off due to developer preferences
+        "noUselessThisAlias": "off", // Turned off due to developer preferences,
+        "noUselessContinue": "off"
+      },
+      "correctness": {
+        "noUnusedImports": "error", // Not in recommended ruleset, turning on manually
+        "useJsxKeyInIterable": "off", // Rule is buggy, revisit later
+        "useExhaustiveDependencies": {
+          "level": "warn",
+          "options": {
+            "reportUnnecessaryDependencies": false,
+            "hooks": [
+              {
+                "name": "useStore",
+                "stableResult": true
+              }
+            ],
+            "reportMissingDependenciesArray": true
+          }
+        }, // React hook dependencies validation is taken cate by react-hooks/exhaustive-deps
+        "noUnusedVariables": "error", // Turned off due to developer preferences,
+        "noInvalidBuiltinInstantiation": "warn"
+      },
+      "security": {
+        "noDangerouslySetInnerHtml": "off", // Covered by Conformance,
+        "noBlankTarget": "off"
+      },
+      "style": {
+        "useFragmentSyntax": "warn", // Not in recommended ruleset, turning on manually
+        "noYodaExpression": "warn", // Not in recommended ruleset, turning on manually
+        "useDefaultParameterLast": "warn", // Not in recommended ruleset, turning on manually
+        "useExponentiationOperator": "off", // Obscure and arguably not easily readable
+        "noUnusedTemplateLiteral": "off", // Stylistic opinion
+        "noUselessElse": "off", // Stylistic opinion,
+        "noParameterAssign": "error",
+        "useAsConstAssertion": "error",
+        "useEnumInitializers": "error",
+        "useSelfClosingElements": "error",
+        "useSingleVarDeclarator": "error",
+        "useNumberNamespace": "error",
+        "noInferrableTypes": "error",
+        "useArrayLiterals": "warn",
+        "noRestrictedImports": {
+          "level": "error",
+          "options": {
+            "paths": {
+              "next/server": {
+                "importNames": ["NextResponse"],
+                "message": "NextResponse is not allowed in API route files. Use Response.json() instead."
+              }
+            }
+          }
+        }
+      },
+      "suspicious": {
+        "noExplicitAny": "off", // We trust Vercelians to use any only when necessary,
+        "noHeadImportInDocument": "warn",
+        "noDocumentImportInPage": "warn",
+        "noDuplicateElseIf": "warn",
+        "noIrregularWhitespace": "warn",
+        "noConsole": {
+          "level": "error",
+          "options": {
+            "allow": ["assert", "error", "info", "warn"]
+          }
+        }
+      },
+      "nursery": {
+        "useSortedClasses": {
+          "level": "error",
+          "fix": "safe",
+          "options": {
+            "attributes": ["className"],
+            "functions": ["cn"]
+          }
+        }
+      }
+    }
+  },
+  "javascript": {
+    "jsxRuntime": "transparent",
+    "formatter": {
+      "jsxQuoteStyle": "double",
+      "quoteProperties": "asNeeded",
+      "trailingCommas": "all",
+      "semicolons": "always",
+      "arrowParentheses": "always",
+      "bracketSpacing": true,
+      "bracketSameLine": false,
+      "lineEnding": "lf",
+      "quoteStyle": "single",
+      "attributePosition": "auto"
+    }
+  },
+  "json": {
+    "formatter": {
+      "enabled": true,
+      "trailingCommas": "none",
+      "lineEnding": "lf"
+    },
+    "parser": {
+      "allowComments": true,
+      "allowTrailingCommas": false
+    }
+  },
+  "css": {
+    "formatter": { "enabled": false },
+    "linter": { "enabled": false }
+  },
+  "assist": { "actions": { "source": { "organizeImports": "off" } } },
+  "overrides": [
+    // Playwright requires an object destructure, even if empty
+    // https://github.com/microsoft/playwright/issues/30007
+    {
+      "includes": ["**/e2e/**"],
+      "linter": {
+        "rules": {
+          "correctness": {
+            "noEmptyPattern": "off"
+          }
+        }
+      }
+    },
+    // Next.js middleware must return NextResponse — the noRestrictedImports
+    // rule on next/server is meant for API route handlers, not middleware.
+    {
+      "includes": ["**/middleware.ts"],
+      "linter": {
+        "rules": {
+          "style": {
+            "noRestrictedImports": "off"
+          }
+        }
+      }
+    }
+  ]
+}
